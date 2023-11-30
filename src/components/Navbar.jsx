@@ -4,6 +4,7 @@ import SearchComponent from "./Search";
 import logo from "./assets/logo.png";
 import ClientNavbar from "./ClientNavbar";
 import { cookies } from "next/headers";
+import fetchWithToken  from "@/lib/fetchWithToken";
 
 export default async function Navbar() {
   let userData = null;
