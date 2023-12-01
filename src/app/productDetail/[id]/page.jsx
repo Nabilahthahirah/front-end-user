@@ -11,9 +11,9 @@ export default async function ProductDetail({params}) {
   return (
     <>
       <div className="flex flex-row gap-2 p-5">
-        <div className="basis-1/2"><ProductImage  /></div>
-        <div className="basis-1/2"><ProductInfo /></div>
-        <div className="basis-1/4"><ProductCart /></div>
+        <div className="basis-1/2"><ProductImage productDetail = {res.data} /></div>
+        <div className="basis-1/2"><ProductInfo productDetail = {res.data} /></div>
+        <div className="basis-1/4"><ProductCart productDetail = {res.data} /></div>
       </div>
     </>
   )
