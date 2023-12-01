@@ -14,6 +14,7 @@ const fetchWithTokenClient = async (endpoint, method, options) => {
     headers,
     ...options,
   };
+  console.log(requestOptions);
   const url = `${baseUrl}/${endpoint}`;
   const response = await fetch(url, requestOptions);
   const data = await response.json();
