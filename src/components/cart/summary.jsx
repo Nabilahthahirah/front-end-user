@@ -8,7 +8,12 @@ const Summary = (props) => {
           <div className="flow-root mb-3">{children}</div>
 
           <div className="card-actions justify-end">
-            <button className="btn btn-primary">{click}</button>
+            <button
+              className="btn btn-primary text-white
+            "
+            >
+              {click}
+            </button>
           </div>
         </div>
       </div>

@@ -93,14 +93,16 @@ export default function ShippingFee() {
               </p>
             </div>
             <div className="border-b">
-              <p className="float-left">Shipping Price</p>
-              <p className="float-right">
-                Rp{" "}
-                {hargaOngkir.toLocaleString("id-ID", {
-                  styles: "currency",
-                  currency: "IDR",
-                })}
-              </p>
+              <div className="flow-root">
+                <p className="float-left">Shipping Price</p>
+                <p className="float-right">
+                  Rp{" "}
+                  {hargaOngkir.toLocaleString("id-ID", {
+                    styles: "currency",
+                    currency: "IDR",
+                  })}
+                </p>
+              </div>
             </div>
             <div>
               <p className="float-left">Shopping Price</p>
