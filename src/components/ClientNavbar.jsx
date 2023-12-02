@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import logo from "./assets/logo.png";
 
 export default function ClientNavbar() {
   const router = useRouter();
@@ -97,7 +98,7 @@ export default function ClientNavbar() {
           <div className=" rounded-full">
             <Image
               alt=""
-              src={ "https:cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png"}
+              src={logo}
               width={100}
               height={100}
               className=""

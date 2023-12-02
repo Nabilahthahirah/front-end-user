@@ -4,6 +4,7 @@ import SearchComponent from "./Search";
 import logo from "./assets/logo.png";
 import ClientNavbar from "./ClientNavbar";
 import { cookies } from "next/headers";
+import fetchWithToken from "@/lib/fetchWithToken";
 
 export default async function Navbar() {
   let userData = null;
@@ -27,6 +28,7 @@ export default async function Navbar() {
       isLoggedIn = true;
     }
   }
+  
   return (
     <div className="flex flex-row bg-white w-full top-0 left-0 border-b border-gray-200">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
@@ -45,6 +47,9 @@ export default async function Navbar() {
             Log In
           </Link>
         )}
+        {/* <Link className="btn btn-primary text-white" href="/auth/login">
+          Log In
+        </Link> */}
       </div>
     </div>
   );

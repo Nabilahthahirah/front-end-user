@@ -1,11 +1,15 @@
 "use client";
 
 import Carousel from "@/components/home/carousel";
+import CarouselProduct from "@/components/home/carouselProduct";
 import CardCategory from "@/components/home/cardCategory";
 import fetchData from "@/lib/fetch";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 export default function Home() {
+
+  // Category
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
@@ -37,9 +41,12 @@ export default function Home() {
         </div>
       </div>
       <div className="flex items-center justify-center py-4">
-        <header className="text-primary text-3xl font-bold px-5 py-2.5 text-center mb-4">Our Products</header>
+        <header className="text-primary text-3xl font-bold px-5 py-2.5 text-center mb-2">Our Products</header>
       </div>
-      <div className="flex flex-row-reverse ml-10">Product</div>
+      <CarouselProduct />
+      <Link href='/products'>
+        <p className="text-primary text-md font-semibold text-center mb-8">See All Products</p>
+      </Link>
     </>
   );
 }

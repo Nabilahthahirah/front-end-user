@@ -1,31 +1,38 @@
-"use client";
-import { useState, FormEvent } from "react";
+"use client"
+
 import { useRouter } from "next/navigation";
 import { CiSearch } from "react-icons/ci";
+import { useRef } from "react";
 
 export default function SearchComponent() {
-  const [searchTerm, setSearchTerm] = useState("");
+  const searchRef = useRef();
   const router = useRouter();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setSearchTerm("");
-    router.push(`/${searchTerm}`);
+  const handleSearch = (event) => {
+    const keyword = searchRef.current.value;
+
+    if (!keyword || keyword.trim() === "") return;
+
+    if (event.key === "Enter" || event.type === "click") {
+      event.preventDefault();
+      router.push(`/products/search/${keyword}`)
+    }
   };
+
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="relative flex items-center justify-between max-auto"
-    >
+    <form className="relative flex items-center justify-between max-auto">
       <input
-        onChange={(e) => setSearchTerm(e.target.value)}
+        ref={searchRef}
         type="text"
-        value={searchTerm}
         id="search-navbar"
         className="block w-full p-2 pl-10 pr-20 py-3 text-sm rounded-md border border-primary focus:outline-none focus:border-secondary"
         placeholder="Search..."
+        onKeyDown={handleSearch}
       />
-      <button className=" hover:bg-primary  rounded-md border border-primary p-[6px] mr-4 ml-2">
+      <button
+        className="hover:bg-primary rounded-md border border-primary p-[6px] mr-4 ml-2"
+        onClick={handleSearch}
+      >
         <CiSearch />
       </button>
     </form>
