@@ -1,18 +1,19 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useAuthStore } from '@/zustand';
 import { useRouter } from 'next/navigation';
 import { baseUrl } from '@/lib/constant';
 import { ToastContainer, toast } from "react-toastify";
 
 export default function ProductCart({productDetail}) {
-  const [options, setOption] = useState([]);
+  const [quantity, setQuantity] = useState(1);
 
   const { token, setToken, isLoggedIn, login, logout } = useAuthStore();
   const router = useRouter();
 
   const addToCart = async () => {
-    const idProduct = productDetail.product_detail[0].id;
+    const idProduct = productDetail.product_detail[0].product_id;
+
     if (!isLoggedIn) {
       router.push("/auth/login");
       return
@@ -26,14 +27,14 @@ export default function ProductCart({productDetail}) {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          id: idProduct,
+          product_id: idProduct,
+          quantitiy: quantity
         }),
       });
 
       const data = await response?.json();
       if (response.ok) {
-        console.log(data);
-        toast.success("Login successful!");
+        toast.success(data.message);
         router.refresh();
       } else {
         toast.error(`${data.error}`);
@@ -55,7 +56,7 @@ export default function ProductCart({productDetail}) {
       })}</p>
       <p className='mb-5'>Berat : {productDetail.product_detail[0].weight} Kg</p>
       <p>Qty : </p>
-      <select className="select select-bordered select-sm w-full max-w-xs">
+      <select className="select select-bordered select-sm w-full max-w-xs" value={quantity} onChange={(e) => setQuantity(e.target.value)}>
         {[1,2,3,4,5,6,7,8,9,10].map((item, index) => {
           return <option key={index} value={item}>{item}</option>
         })}
