@@ -23,12 +23,61 @@ export default function ShippingFee() {
   const ukuranProduk = "30";
   const qty = 2;
   const price = 100000;
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const username = e.target.username.value;
+    const email = e.target.email.value;
+    const phone = e.target.phone.value;
+    const password = e.target.password.value;
+    const confirm_password = e.target.confirm_password.value;
+
+    if (password !== confirm_password) {
+      toast.error("Password do not match");
+      return;
+    }
+    // Check if username is valid
+    if (!isUsernameValid) {
+      toast.error("Please fix the errors in the form.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`${baseUrl}/api/user/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          email,
+          phone,
+          password,
+        }),
+      });
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success("Registration successful!");
+      } else {
+        toast.error(`${data.message}`);
+        return;
+      }
+      router.push("/auth/login");
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("An error occurred. Please try again later.");
+    }
+  };
+
   return (
     <div>
       <Title title="Check Out" />
       <div className="flex flex-row gap-0 mx-20">
         <div className="basis-3/4 mx-5">
-          <Select
+          <p className="font-semibold mb-5">Address</p>
+          <p>{optionAddress}</p>
+          {/* <Select
             title="Address"
             disableSelected="Choose Address"
             option={optionAddress}
@@ -39,8 +88,8 @@ export default function ShippingFee() {
             >
               Add Address
             </button>
-            <FormAddress />
-          </Select>
+            <FormAddress onSubmit={handleSubmit} />
+          </Select> */}
           <div className="divider" />
           <div className="produk">
             <p className="font-semibold">Order Details</p>

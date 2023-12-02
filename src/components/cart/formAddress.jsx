@@ -1,10 +1,11 @@
 "use client";
-export default function FormAddresses() {
+export default function FormAddresses(props) {
+  const { handleSubmit } = props;
   return (
     <dialog id="my_modal_3" className="modal">
       <div className="modal-box">
         <h3 className="font-bold text-lg text-center my-4">Add Address</h3>
-        <form method="dialog">
+        <form method="dialog" onSubmit={handleSubmit}>
           <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
             ✕
           </button>
@@ -39,7 +40,10 @@ export default function FormAddresses() {
               className="input input-bordered input-primary w-full text-black placeholder:text-black/70 mb-2"
             />
             <div className="flex flex-row-reverse ">
-              <button className="btn btn-primary  text-white"> Add</button>
+              <button className="btn btn-primary text-white" type="submit">
+                {" "}
+                Add
+              </button>
             </div>
           </div>
         </form>
