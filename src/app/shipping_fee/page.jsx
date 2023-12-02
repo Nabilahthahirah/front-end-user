@@ -1,11 +1,11 @@
 "use client";
 import FormAddress from "../../components/cart/formAddress";
-import fotoProduct from "../../components/assets/shoes.jpg";
+import fotoProduct from "../../components/assets/kidshoes.jpg";
 import Title from "../../components/cart/title.jsx";
 import Select from "@/components/cart/select";
 import Summary from "@/components/cart/summary";
 import Image from "next/image";
-export default function Checkout() {
+export default function ShippingFee() {
   const totaHarga = 10000000;
   const hargaOngkir = 2132123;
   const totalBelanja = totaHarga + hargaOngkir;

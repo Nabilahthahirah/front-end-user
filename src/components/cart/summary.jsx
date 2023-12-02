@@ -1,4 +1,4 @@
-const Summary = (props) => {
+const ShoppingSummary = (props) => {
   const { children, click } = props;
   return (
     <div className="flex justify-center p-6 mx-6 ">
@@ -15,4 +15,4 @@ const Summary = (props) => {
     </div>
   );
 };
-export default Summary;
+export default ShoppingSummary;

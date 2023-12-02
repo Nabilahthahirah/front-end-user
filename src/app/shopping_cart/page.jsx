@@ -1,9 +1,9 @@
 "use client";
 import Title from "../../components/cart/title.jsx";
 import TableProduct from "@/components/cart/tableProduct.jsx";
-import fotoProduct from "../../components/assets/shoes.jpg";
+import fotoProduct from "../../components/assets/kidshoes.jpg";
 import Summary from "@/components/cart/summary.jsx";
-export default function Cart() {
+export default function ShoppingCart() {
   const priceProduct = 10000;
   const totalPrice = 500000;
   const subTotal = 100000000;

@@ -4,7 +4,6 @@ export default function FormAddress() {
     <dialog id="my_modal_3" className="modal">
       <div className="modal-box">
         <h3 className="font-bold text-lg text-center my-4">Add Address</h3>
-        {/* <p className="py-4">Press ESC key or click on ✕ button to close</p> */}
         <form method="dialog">
           <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
             ✕

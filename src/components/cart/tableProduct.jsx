@@ -1,5 +1,5 @@
 import Image from "next/image";
-const TableProduct = (props) => {
+const TableProducts = (props) => {
   const { nameProduct, sizeProduct, colorProduct, price, photoProduct } = props;
   return (
     <table className="w-full m-6 border-gray-300 border-l-0 border-r-0 border-t-0">
@@ -142,4 +142,4 @@ const TableProduct = (props) => {
     </table>
   );
 };
-export default TableProduct;
+export default TableProducts;

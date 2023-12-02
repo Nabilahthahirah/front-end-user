@@ -1,4 +1,4 @@
-const Select = (props) => {
+const Selection = (props) => {
   const { title, disableSelected, option, children } = props;
   return (
     <div>
@@ -13,4 +13,4 @@ const Select = (props) => {
     </div>
   );
 };
-export default Select;
+export default Selection;

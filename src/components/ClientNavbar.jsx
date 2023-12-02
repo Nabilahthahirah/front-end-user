@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-
+import logo from "./assets/profile.jpg";
 export default function ClientNavbar() {
   const router = useRouter();
   const { refresh, setRefresh, token, setToken, isLoggedIn, login, logout } =
@@ -69,8 +69,9 @@ export default function ClientNavbar() {
               />
             </svg>
             <span className="badge badge-sm indicator-item">
-              {/* {cartItemCount === 0 ? null : cartItemCount} 
-              */} Cart
+              {/* {cartItemCount === 0 ? null : cartItemCount}
+               */}{" "}
+              Cart
             </span>
           </div>
         </label>
@@ -95,13 +96,7 @@ export default function ClientNavbar() {
       <div className="dropdown dropdown-bottom min-[473px]:dropdown-end">
         <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
           <div className=" rounded-full">
-            <Image
-              alt=""
-              src={ "https:cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png"}
-              width={100}
-              height={100}
-              className=""
-            />
+            <Image alt="" src={logo} width={100} height={100} className="" />
           </div>
         </label>
         <ul
