@@ -1,6 +1,6 @@
 "use client";
 import FormAddress from "../../components/cart/formAddress";
-import fotoProduct from "../../components/assets/kidshoes.jpg";
+import fotoProduct from "../../components/assets/shoes.jpg";
 import Title from "../../components/cart/title.jsx";
 import Select from "@/components/cart/select";
 import Summary from "@/components/cart/summary";

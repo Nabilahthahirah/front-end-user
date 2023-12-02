@@ -1,5 +1,5 @@
 "use client";
-export default function FormAddress() {
+export default function FormAddresses() {
   return (
     <dialog id="my_modal_3" className="modal">
       <div className="modal-box">
