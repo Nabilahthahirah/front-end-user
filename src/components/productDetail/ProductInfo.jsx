@@ -6,7 +6,7 @@ export default function ProductInfo({productDetail}) {
   }
   
   return (
-    <div className=''>
+    <div>
       <h1 className="font-bold text-3xl">{productDetail.name}</h1>
       <div className="badge badge-info gap-2">
         {productDetail.product_detail[0].stock != 0 ? 'Stok Tersedia' : 'Stock Habis'}

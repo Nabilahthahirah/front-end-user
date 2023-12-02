@@ -6,7 +6,6 @@ import Image from "next/image";
 
 export default async function ProductDetail({params}) {
   const res = await fetchWithTokenClient(`api/products/${params.id}`,  "GET", {cache: "no-store"});
-  console.log(res);
   
   return (
     <>
