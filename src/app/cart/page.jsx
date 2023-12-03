@@ -1,41 +1,32 @@
-"use client";
 import Title from "../../components/cart/title.jsx";
 import TableProduct from "@/components/cart/tableProduct.jsx";
-import { useEffect, useState } from "react";
-import fotoProduct from "../../components/assets/shoes.jpg";
-import { getCookie } from "cookies-next";
 import Summary from "@/components/cart/summary.jsx";
-import fetchWithToken from "@/lib/fetchWithToken.js";
+import fetchWithTokenServer from "@/lib/fetchWithTokenServer.js";
+import fetchWithTokenClient from "@/lib/fetchWithTokenClient.js";
+import { useAuthStore, useCartStore } from "@/zustand";
+import { useRouter } from "next/navigation";
 
-export default async function ShoppingCart() {
-  const token = getCookie(`accessToken`);
-  // const cartProduct = await fetchWithToken(`api/cart`, token);
+export default async function Cart() {
+  const carts = await fetchWithTokenServer(`api/cart`, "GET", {
+    cache: "no-store",
+  });
+  console.log("Carts", carts);
+  // const [order, setorder] = useState([]);
+  // const [totalPrice, setTotalPrice] = useState(0);
+  // const handleAddOrder = (id) => {
+  //   if (order.length == 0) {
+  //     setorder([{carts.id}]);
+  //   }
+  // };
 
-  const [data, setData] = useState(null);
-  console.log("data", data);
-  const totalPrice = 500000;
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetchWithToken(`api/cart`, token);
-      console.log(response);
-      const result = await response.json();
-      setData(result.data);
-    };
-    fetchData();
-  }, []);
+  const totalPricea = 123213;
+
   return (
     <div>
       <Title title="Shopping Cart" />
       <div className="flex flex- gap-0 mx-20">
         <div className="basis-3/4">
-          <TableProduct
-            cartProduct={data}
-            // price="50000"
-            // nameProduct="Sepatu Anak"
-            // sizeProduct="30"
-            // colorProduct="gray"
-            // photoProduct={fotoProduct}
-          />
+          <TableProduct cartData={carts} />
         </div>
         <div className="basis-1/4">
           <Summary click="Check Out">
@@ -43,7 +34,7 @@ export default async function ShoppingCart() {
               <p className="float-left">Total Price </p>
               <p className="float-right">
                 Rp{" "}
-                {totalPrice.toLocaleString("id-ID", {
+                {totalPricea.toLocaleString("id-ID", {
                   styles: "currency",
                   currency: "IDR",
                 })}
@@ -55,3 +46,42 @@ export default async function ShoppingCart() {
     </div>
   );
 }
+
+// export default function Cart({ data }) {
+// const router = useRouter();
+// const { refresh, setRefresh, token, setToken, isLoggedIn, login, logout } =
+//   useAuthStore();
+// const { cart, setCart } = useCartStore();
+// useEffect(() => {
+//   const fetchCart = async (token) => {
+//     const data = await fetchWithToken("api/cart", token);
+//     return await data;
+//   };
+//   const fetchData = async () => {
+//     const storedToken = getCookie("accessToken");
+//     if (storedToken) {
+//       const data = await fetchCart(storedToken);
+//       setCart(data.data);
+//       setToken(storedToken);
+//       login();
+//       // router.refresh();
+//     }
+//   };
+//   fetchData(); // Call the async function immediately
+// }, [token, setToken, isLoggedIn, login, logout, refresh, setCart]);
+
+// useEffect(() => {
+//   if (cart) {
+//     router.refresh();
+//     console.log(cart.data);
+//   }
+// }, [cart, router, setRefresh, refresh]);
+
+// if (!cart) return;
+
+// export async function getServerSideProps() {
+//   const { token } = useAuthStore();
+//   const response = await fetchWithToken(`api/cart`, token);
+//   const data = response.data;
+//   return { props: { data } };
+// }
