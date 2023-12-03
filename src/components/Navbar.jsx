@@ -6,7 +6,6 @@ import ClientNavbar from "./ClientNavbar";
 import { cookies } from "next/headers";
 import fetchWithToken from "@/lib/fetchWithToken";
 
-
 export default async function Navbar() {
   let userData = null;
   //Check Token

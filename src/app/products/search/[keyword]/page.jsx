@@ -5,8 +5,14 @@ import CardProduct from '@/components/products/cardProduct';
 import FilterCategory from '@/components/products/filterCategory';
 import fetchData from '@/lib/fetch';
 import Link from 'next/link';
+import Pagination from '@/components/Pagination';
 
 const SearchPage = ({params}) => {
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(1);
+  const pageSize = 12;
+
   const { keyword } = params;
   const decodedKeyword = decodeURI(keyword || '');
 
@@ -16,11 +22,12 @@ const SearchPage = ({params}) => {
   useEffect(() => {
     async function fetchProducts() {
       try {
-        const { data } = await fetchData(`api/products/search?name=${decodedKeyword}`, 'GET', {
+        const { data } = await fetchData(`api/products/search?name=${decodedKeyword}&page=${currentPage}&pageSize=${pageSize}`, 'GET', {
           cache: 'no-store',
         });
 
-        setProducts(data);
+        setProducts(data.products);
+        setTotalPage(data.totalPages)
       } catch (error) {
         console.error('Error fetching products:', error);
       }
@@ -39,7 +46,7 @@ const SearchPage = ({params}) => {
 
     fetchProducts();
     fetchCategories();
-  }, [decodedKeyword]);
+  }, [decodedKeyword, currentPage]);
 
   return (
     <div className='m-4'>
@@ -49,7 +56,7 @@ const SearchPage = ({params}) => {
         </header>
       </div>
       <div className='flex'>
-        <div className='flex-none w-1/6 p-4 border border-primary border-2 rounded-lg shadow-xl'>
+        <div className='flex-none md:w-1/6 hidden p-4 border border-primary border-2 rounded-lg shadow-xl'>
           <div className="flex justify-between text-primary">
             <h3 className='text-xl font-semibold'>Filter</h3>
             <Link href="/products">
@@ -64,11 +71,14 @@ const SearchPage = ({params}) => {
           </div>
         </div>
 
-        <div className='flex-auto w-5/6'>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mx-4">
+        <div className='flex-auto md:w-5/6 w-full'>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mx-4 mb-8">
             {products.map(product => (
               <CardProduct key={product.id} product={product} />
             ))}
+          </div>
+          <div className='flex justify-center text-center'>
+            <Pagination page={currentPage} lastPage={totalPage} setPage={setCurrentPage} />
           </div>
         </div>
       </div>
