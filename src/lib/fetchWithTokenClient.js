@@ -2,6 +2,7 @@ import { getCookie } from "cookies-next";
 import { baseUrl } from "./constant";
 
 const fetchWithTokenClient = async (endpoint, method, options) => {
+  console.log(endpoint);
   const token = getCookie(`accessToken`);
   const headers = {
     "Content-Type": "application/json",

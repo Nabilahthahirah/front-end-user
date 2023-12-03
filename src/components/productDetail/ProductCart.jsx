@@ -4,11 +4,13 @@ import { useAuthStore } from '@/zustand';
 import { useRouter } from 'next/navigation';
 import { baseUrl } from '@/lib/constant';
 import { ToastContainer, toast } from "react-toastify";
+import { getCookie } from "cookies-next";
 
 export default function ProductCart({productDetail}) {
   const [quantity, setQuantity] = useState(1);
-
-  const { token, setToken, isLoggedIn, login, logout } = useAuthStore();
+  const token = getCookie(`accessToken`);
+  
+  const { isLoggedIn } = useAuthStore();
   const router = useRouter();
 
   const addToCart = async () => {

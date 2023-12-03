@@ -9,11 +9,13 @@ export default async function ProductDetail({params}) {
   
   return (
     <>
+    <div className='items-center justify-center h-screen'>
       <div className="flex flex-row gap-2 p-5">
         <div className="basis-1/2"><ProductImage productDetail = {res.data} /></div>
         <div className="basis-1/2"><ProductInfo productDetail = {res.data} /></div>
         <div className="basis-1/4"><ProductCart productDetail = {res.data} /></div>
       </div>
+    </div>
     </>
   )
 }
