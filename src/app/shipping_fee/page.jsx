@@ -1,11 +1,10 @@
-"use client";
 import fotoProduct from "../../components/assets/shoes.jpg";
 import Title from "../../components/cart/title.jsx";
 import Select from "@/components/cart/select";
 import Summary from "@/components/cart/summary";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import fetchWithToken from "@/lib/fetchWithToken";
+import fetchWithTokenServer from "@/lib/fetchWithTokenServer";
 import { useAuthStore } from "@/zustand";
 const getAddress = async (token) => {
   console.log("token", token);
@@ -14,41 +13,33 @@ const getAddress = async (token) => {
   return response.data;
 };
 const Shipping_fee = async () => {
-  // export default function ShippingFee() {
-  const router = useRouter();
-  const { token, setToken, isLoggedIn, login, logout } = useAuthStore();
-  // if (!isLoggedIn) {
-  //   router.push("/auth/login");
-  //   return;
-  // }
+  const fetchAddress = await fetchWithTokenServer(`api/address`, "GET", {
+    cache: "no-store",
+  });
+  const addressUser = fetchAddress.data;
+  const methodPayment = await fetchWithTokenServer(`api/paymentmethod`, "GET", {
+    cache: "no-store",
+  });
+  const paymentMethods = methodPayment.data;
 
   const totaHarga = 10000000;
   const hargaOngkir = 2132123;
   const totalBelanja = totaHarga + hargaOngkir;
-  // const address = [
-  //   {
-  //     name: "jalan nasdasdsadasdi",
-  //     city: "Palembang",
-  //     postalCode: "213213",
-  //     phone: "1231231",
-  //   },
-  // ];
   const namaProduk = "Sepatu Anak";
   const warnaProduk = "grey";
   const ukuranProduk = "30";
   const qty = 2;
   const price = 100000;
-
-  const address = await getAddress(token);
-  console.log("address", address);
-  const optionAddress = `${address.address} ${address.city} ${address.postal_code} Phone: ${address.phone}`;
   return (
     <div>
       <Title title="Check Out" />
       <div className="flex flex-row gap-0 mx-20">
         <div className="basis-3/4 mx-5">
           <p className="font-semibold mb-5">Address</p>
-          <p>{optionAddress}</p>
+          <p>
+            {addressUser[0].address} {addressUser[0].city}{" "}
+            {addressUser[0].postal_code} {addressUser[0].phone}
+          </p>
           <div className="divider" />
           <div className="produk">
             <p className="font-semibold">Order Details</p>
@@ -75,17 +66,31 @@ const Shipping_fee = async () => {
             </div>
           </div>
           <div className="divider" />
-          <Select
-            title="Shipping Method"
-            disableSelected="Choose Shipping"
-            option="JNE"
-          />
+          <p className="font-semibold mb-5">Shipping Method</p>
+          <select
+            value="selectedShippingMethod"
+            className="select select-primary w-full max-w-full mb-2"
+          >
+            <option disabled selected>
+              Choose Shipping Method
+            </option>
+            <option>JNE</option>
+          </select>
           <div className="divider" />
-          <Select
-            title="Payment Method"
-            disableSelected="Choose Payment"
-            option="QRIS"
-          />
+
+          <p className="font-semibold mb-5">Payment Method</p>
+          <select
+            value="selectedPaymentMethod"
+            className="select select-primary w-full max-w-full mb-2"
+          >
+            <option disabled selected>
+              Choose Payment Method
+            </option>
+            {paymentMethods.map((option) => (
+              <option value={option.id}>{option.value}</option>
+            ))}
+          </select>
+
           <div className="mb-10" />
         </div>
         <div className="basis-1/4 space-0">

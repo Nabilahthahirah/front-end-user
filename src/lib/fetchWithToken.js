@@ -21,7 +21,6 @@ const fetchWithToken = async (path, token, options = {}) => {
     if (data.error === "Unauthorized") {
       deleteCookie(`accessToken`);
     }
-
     return data;
   } catch (error) {
     console.error("Error:", error);

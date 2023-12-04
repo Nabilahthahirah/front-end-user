@@ -29,7 +29,6 @@ export default function ClientNavbar() {
         // router.refresh();
       }
     };
-
     fetchData(); // Call the async function immediately
   }, [token, setToken, isLoggedIn, login, logout, refresh, setUser]);
   useEffect(() => {

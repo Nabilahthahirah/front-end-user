@@ -30,4 +30,5 @@ const fetchWithTokenServer = async (endpoint, method, options) => {
 
   return data;
 };
+
 export default fetchWithTokenServer;

@@ -1,5 +1,5 @@
 const Select = (props) => {
-  const { title, disableSelected, option, children } = props;
+  const { title, disableSelected, option, children, data } = props;
   return (
     <div>
       <p className="font-semibold mb-5">{title}</p>
@@ -7,7 +7,9 @@ const Select = (props) => {
         <option disabled selected>
           {disableSelected}
         </option>
-        <option>{option}</option>
+        {data.map((option) => (
+          <option value={option.id}>{option.value}</option>
+        ))}
       </select>
       {children}
     </div>
