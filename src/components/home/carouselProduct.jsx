@@ -14,14 +14,11 @@ const CarouselProduct = () => {
   useEffect(() => {
     async function fetchProducts() {
       try {
-        const { data } = await fetchData("api/products", "GET", {
+        const { data } = await fetchData("api/products?page=1&pageSize=12", "GET", {
           cache: "no-store",
         });
 
-        const limitedProducts =
-          data.length > 10 ? getLimitedProducts(data, 10) : data;
-
-        setProducts(limitedProducts);
+        setProducts(data.products);
       } catch (error) {
         console.error("Error fetching products:", error);
       }
