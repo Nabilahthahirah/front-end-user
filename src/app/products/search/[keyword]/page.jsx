@@ -56,7 +56,7 @@ const SearchPage = ({params}) => {
         </header>
       </div>
       <div className='flex'>
-        <div className='flex-none md:w-1/6 hidden p-4 border border-primary border-2 rounded-lg shadow-xl'>
+        <div className='flex-none md:w-1/6 hidden sm:block p-4 border border-primary border-2 rounded-lg shadow-xl'>
           <div className="flex justify-between text-primary">
             <h3 className='text-xl font-semibold'>Filter</h3>
             <Link href="/products">
@@ -71,7 +71,7 @@ const SearchPage = ({params}) => {
           </div>
         </div>
 
-        <div className='flex-auto md:w-5/6 w-full'>
+        <div className='flex-auto md:w-5/6 sm:w-full'>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mx-4 mb-8">
             {products.map(product => (
               <CardProduct key={product.id} product={product} />

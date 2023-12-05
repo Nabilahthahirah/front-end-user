@@ -57,7 +57,7 @@ const Page = () => {
         <header className="text-primary text-3xl font-bold px-5 py-2.5 text-center">All Products</header>
       </div>
       <div className='flex'>
-        <div className='flex-none md:w-1/6 p-4 border border-primary border-2 rounded-lg shadow-xl hidden'>
+        <div className='flex-none md:w-1/6 hidden sm:block p-4 border border-primary border-2 rounded-lg shadow-xl'>
           <div className="flex justify-between text-primary">
             <h3 className='text-xl font-semibold'>Filter</h3>
             <Link href="/products">
