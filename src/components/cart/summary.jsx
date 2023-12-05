@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 const Summary = (props) => {
-  const { children, title, direct } = props;
+  const { children, title, link } = props;
   const router = useRouter();
   return (
     <div className="flex justify-center p-6 mx-6 ">
@@ -12,7 +12,7 @@ const Summary = (props) => {
 
           <div className="card-actions justify-end">
             <button
-              onClick={() => router.push(`${direct}`)}
+              onClick={() => router.push(`${link}`)}
               className="btn btn-primary text-white
             "
             >

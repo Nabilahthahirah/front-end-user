@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 export default function DeleteProduct({ carts }) {
   const router = useRouter();
   const token = getCookie(`accessToken`);
-  const handleDelete = async (cartsId) => {
+  const handleDeleteProduct = async (cartsId) => {
     const headers = {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
@@ -32,7 +32,7 @@ export default function DeleteProduct({ carts }) {
   return (
     <button
       className="btn bg-red-500 text-white"
-      onClick={() => handleDelete(carts.id)}
+      onClick={() => handleDeleteProduct(carts.id)}
     >
       delete
     </button>

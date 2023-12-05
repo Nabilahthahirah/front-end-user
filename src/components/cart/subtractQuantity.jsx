@@ -10,7 +10,7 @@ export default function SubtractQuantity({ carts }) {
     if (cartQuantity <= 1) {
       return;
     }
-    const cartAddQuantity = cartQuantity - 1;
+    const cartSubQuantity = cartQuantity - 1;
     const requestOptions = {
       method: "PUT",
       headers: {
@@ -18,7 +18,7 @@ export default function SubtractQuantity({ carts }) {
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        quantity: cartAddQuantity,
+        quantity: cartSubQuantity,
       }),
     };
 

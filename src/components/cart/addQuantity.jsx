@@ -2,7 +2,6 @@
 import { getCookie } from "cookies-next";
 import { baseUrl } from "@/lib/constant";
 import { useRouter } from "next/navigation";
-import { ToastContainer, toast } from "react-toastify";
 export default function AddQuantity({ carts }) {
   const router = useRouter();
   const token = getCookie(`accessToken`);
