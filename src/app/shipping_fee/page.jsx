@@ -196,13 +196,13 @@ export default function ShippingFee() {
         }),
       });
       const data = await response.json();
-      setOrderId(data.data.id);
       if (response.ok) {
         toast.success("Order successful!");
       } else {
         toast.error(`${data.message}`);
         return;
       }
+      return data.data.id;
     } catch (error) {
       console.error("Error:", error);
       toast.error("An error occurred. Please try again later.");
@@ -416,6 +416,25 @@ export default function ShippingFee() {
                 </div>
                 <div className="card-actions justify-end">
                   <button
+                    onClick={async () => {
+                      const orderIdBeneran = await handleOrder(
+                        cart,
+                        subTotal,
+                        shippingFee
+                      );
+                      handlePayment(
+                        orderIdBeneran,
+                        cart,
+                        selectedPaymentMethod,
+                        totalBelanja
+                      );
+                    }}
+                    className="btn btn-primary text-white"
+                  >
+                    Check Out
+                  </button>
+
+                  {/* <button
                     onClick={() => {
                       handleOrder(cart, subTotal, shippingFee),
                         handlePayment(
@@ -428,7 +447,7 @@ export default function ShippingFee() {
                     className="btn btn-primary text-white"
                   >
                     Check Out
-                  </button>
+                  </button> */}
                 </div>
               </div>
             </div>
