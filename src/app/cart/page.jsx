@@ -8,7 +8,7 @@ export default async function Cart() {
   });
   console.log("carts", carts.data);
   return (
-    <div className="">
+    <div>
       <Title title="Shopping Cart" />
       <div className="flex flex- gap-0 mx-20">
         <div className="basis-3/4">

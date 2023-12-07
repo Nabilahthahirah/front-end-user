@@ -1,136 +1,401 @@
-import fotoProduct from "../../components/assets/shoes.jpg";
-import Title from "../../components/cart/title.jsx";
-import Select from "@/components/cart/select";
-import Summary from "@/components/cart/summary";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import fetchWithTokenServer from "@/lib/fetchWithTokenServer";
-import { useAuthStore } from "@/zustand";
-const getAddress = async (token) => {
-  console.log("token", token);
-  const response = await fetchWithToken(`api/address`, token);
-  console.log("response", response);
-  return response.data;
-};
-const Shipping_fee = async () => {
-  const fetchAddress = await fetchWithTokenServer(`api/address`, "GET", {
-    cache: "no-store",
-  });
-  const addressUser = fetchAddress.data;
-  const methodPayment = await fetchWithTokenServer(`api/paymentmethod`, "GET", {
-    cache: "no-store",
-  });
-  const paymentMethods = methodPayment.data;
+"use client";
 
-  const totaHarga = 10000000;
-  const hargaOngkir = 2132123;
-  const totalBelanja = totaHarga + hargaOngkir;
-  const namaProduk = "Sepatu Anak";
-  const warnaProduk = "grey";
-  const ukuranProduk = "30";
-  const qty = 2;
-  const price = 100000;
+import React, { useState, useEffect } from "react";
+import Title from "@/components/cart/title.jsx";
+import Select from "@/components/shippingFee/select";
+import fetchData from "@/fetch";
+import Image from "next/image";
+import { getCookie } from "cookies-next";
+import { baseUrl } from "@/lib/constant";
+import Link from "next/link";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+export default function ShippingFee() {
+  const token = getCookie(`accessToken`);
+  const router = useRouter();
+  const [cartProduct, setCartProduct] = useState([]);
+  const [cart, setCart] = useState(0);
+  const [shippingFee, setShippingFee] = useState(0);
+  const [selectedShippingOption, setSelectedShippingOption] = useState("");
+  const [selectedPaymentOption, setSelectedPaymentOption] = useState("");
+  const [subTotal, setSubTotal] = useState(0);
+  const [addressUser, setAddressUser] = useState([]);
+  const [provinceId, setProvinceId] = useState(0);
+  const [cityId, setCityId] = useState(0);
+  const [province, setProvince] = useState([]);
+  const [city, setCity] = useState([]);
+  const [paymentMethod, setPaymentMethod] = useState([]);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(0);
+  const [tokenMidtrans, setTokenMidtrans] = useState("");
+  const [orderId, setOrderId] = useState(0);
+
+  useEffect(() => {
+    async function fetchPaymentMethod() {
+      try {
+        const { data } = await fetchData(`api/paymentmethod`, "GET", {
+          cache: "no-store",
+        });
+
+        setPaymentMethod(data);
+      } catch (error) {
+        console.error("Error fetching province:", error);
+      }
+    }
+
+    fetchPaymentMethod();
+  }, []);
+
+  useEffect(() => {
+    async function fetchCart() {
+      try {
+        const response = await fetch(`${baseUrl}/api/cart/`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await response.json();
+
+        setCart(data.data.id);
+        setCartProduct(data.data.cart_product);
+        calculateSubTotal(data.data.cart_product);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    }
+
+    fetchCart();
+  }, [token]);
+
+  useEffect(() => {
+    async function fetchAddress() {
+      try {
+        const response = await fetch(`${baseUrl}/api/address/`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await response.json();
+        setAddressUser(data.data[0]);
+        setProvinceId(data.data[0].province_id);
+        setCityId(data.data[0].city_id);
+      } catch (error) {
+        console.error("Error fetching address:", error);
+      }
+    }
+    fetchAddress();
+  }, [token]);
+  // console.log("addressUser", addressUser);
+  // console.log("provinceId", provinceId);
+  // console.log("cityId", cityId);
+
+  useEffect(() => {
+    async function fetchProvince() {
+      try {
+        const { data } = await fetchData(
+          `api/user/province/${provinceId}`,
+          "GET",
+          {
+            cache: "no-store",
+          }
+        );
+
+        setProvince(data.name);
+      } catch (error) {
+        console.error("Error fetching province:", error);
+      }
+    }
+    fetchProvince();
+  }, [provinceId]);
+  // console.log("province", province);
+
+  useEffect(() => {
+    async function fetchCity() {
+      try {
+        const { data } = await fetchData(`api/user/city/${cityId}`, "GET", {
+          cache: "no-store",
+        });
+
+        setCity(data.name);
+      } catch (error) {
+        console.error("Error fetching city:", error);
+      }
+    }
+    fetchCity();
+  }, [cityId]);
+  // console.log("city", city);
+
+  const calculateSubTotal = (cartProduct) => {
+    let total = 0;
+
+    cartProduct.forEach((item) => {
+      total += item.price * item.quantity;
+    });
+
+    setSubTotal(total);
+  };
+
+  const handleShippingOptionChange = (selectedOption) => {
+    setSelectedShippingOption(selectedOption.toLowerCase());
+  };
+
+  const courier = selectedShippingOption;
+
+  useEffect(() => {
+    async function fetchShipping() {
+      try {
+        const response = await fetch(
+          `${baseUrl}/api/shipping/${cart}?courier=${courier}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const data = await response.json();
+        setShippingFee(data.data);
+      } catch (error) {
+        console.error("Error fetching fee:", error);
+      }
+    }
+    fetchShipping();
+  }, [token, cart, courier]);
+
+  const totalBelanja = shippingFee + subTotal;
+
+  useEffect(() => {
+    const midtransUrl = "https://app.sandbox.midtrans.com/snap/snap.js";
+    let scriptTag = document.createElement("script");
+    scriptTag.src = midtransUrl;
+    const midtransClientKey = "SB-Mid-client-RGHlGALHJ5YF5uma";
+    scriptTag.setAttribute("data-client-key", midtransClientKey);
+    document.body.appendChild(scriptTag);
+    return () => {
+      document.body.removeChild(scriptTag);
+    };
+  }, []);
+
+  const handleOrder = async (cart, subTotal, shippingFee) => {
+    try {
+      const response = await fetch(`${baseUrl}/api/order`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          cart_id: cart,
+          productPrice: subTotal,
+          shippingCost: shippingFee,
+        }),
+      });
+      const data = await response.json();
+      setOrderId(data.data.id);
+      if (response.ok) {
+        toast.success("Order successful!");
+      } else {
+        toast.error(`${data.message}`);
+        return;
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("An error occurred. Please try again later.");
+    }
+  };
+
+  const handlePayment = async (
+    orderId,
+    cart,
+    selectedPaymentMethod,
+    totalBelanja
+  ) => {
+    const response = await fetch(`${baseUrl}/api/payment/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        order_id: parseInt(orderId),
+        cart_id: parseInt(cart),
+        payment_method_id: parseInt(selectedPaymentMethod),
+        total_price: parseInt(totalBelanja),
+      }),
+    });
+    const data = await response.json();
+    console.log("data payment", data);
+    setTokenMidtrans(data.token);
+    console.log("token midtrans", tokenMidtrans);
+    if (response.ok) {
+      toast.success("Payment successful!");
+    } else {
+      toast.error(`${data.message}`);
+      return;
+    }
+    router.refresh();
+    // router.push("/shipping_fee");
+  };
+
+  useEffect(() => {
+    if (tokenMidtrans) {
+      window.snap.pay(tokenMidtrans, {
+        onSuccess: (result) => {
+          toast.success("pembayaran ", JSON.stringify(result));
+          setTokenMidtrans("");
+        },
+        onPending: (result) => {
+          toast.info("pembayaran ", JSON.stringify(result));
+          setTokenMidtrans("");
+        },
+        onError: (result) => {
+          toast.error("pembayaran ", JSON.stringify(error));
+          setTokenMidtrans("");
+        },
+        onClose: () => {
+          toast.warn("Anda belum menyelesaikan pembayaran");
+          setTokenMidtrans("");
+        },
+      });
+    }
+  }, [tokenMidtrans]);
+
   return (
     <div>
       <Title title="Check Out" />
       <div className="flex flex-row gap-0 mx-20">
         <div className="basis-3/4 mx-5">
-          <p className="font-semibold mb-5">Address</p>
-          <p>
-            {addressUser[0].address} {addressUser[0].city}{" "}
-            {addressUser[0].postal_code} {addressUser[0].phone}
-          </p>
+          <div className="Address">
+            <p className="font-semibold mb-5">Address</p>
+            <p>
+              {addressUser.address} {city} {province}
+            </p>
+            <p>Postal Code : {addressUser.postal_code}</p>
+            <p>Phone : {addressUser.phone}</p>
+          </div>
           <div className="divider" />
           <div className="produk">
             <p className="font-semibold">Order Details</p>
-            <div className="flex flex-row justify-center  mt-3">
-              <div className="w-1/3">
-                {" "}
-                <Image src={fotoProduct} alt="produk1" />
-              </div>
-              <div className="w-2/3">
-                <p clossName="font-semibold">{namaProduk}</p>
-                <p>
-                  {warnaProduk}
-                  {", "}
-                  {ukuranProduk}
-                </p>
-                <p>
-                  {qty} x Rp{" "}
-                  {price.toLocaleString("id-ID", {
-                    styles: "currency",
-                    currency: "IDR",
-                  })}
-                </p>
-              </div>
-            </div>
+
+            {cartProduct.length > 0 &&
+              cartProduct.map((cartP) => (
+                <div className="flex flex-row items-center ">
+                  <div className="avatar w-20 h-20">
+                    <Image
+                      fill
+                      src={cartP.product.product_detail[0].photo}
+                      alt={cartP.product.name}
+                    />
+                  </div>
+                  <div className="ml-3">
+                    <div className="font-bold">{cartP.product.name}</div>
+                    <p>{cartP.product.product_detail[0].color}</p>
+                    <p>
+                      {cartP.quantity} x Rp{" "}
+                      {cartP.price.toLocaleString("id-ID", {
+                        styles: "currency",
+                        currency: "IDR",
+                      })}
+                    </p>
+                  </div>
+                </div>
+              ))}
           </div>
           <div className="divider" />
-          <p className="font-semibold mb-5">Shipping Method</p>
-          <select
-            value="selectedShippingMethod"
-            className="select select-primary w-full max-w-full mb-2"
-          >
-            <option disabled selected>
-              Choose Shipping Method
-            </option>
-            <option>JNE</option>
-          </select>
+          <Select
+            title="Shipping Method"
+            disableSelected="Choose Shipping"
+            options={["Jne", "Tiki", "POS"]}
+            onChange={handleShippingOptionChange}
+          />
           <div className="divider" />
-
           <p className="font-semibold mb-5">Payment Method</p>
           <select
-            value="selectedPaymentMethod"
             className="select select-primary w-full max-w-full mb-2"
+            name="paymentMethod"
+            id="paymentMethod"
+            onChange={(e) => setSelectedPaymentMethod(e.target.value)}
           >
             <option disabled selected>
               Choose Payment Method
             </option>
-            {paymentMethods.map((option) => (
-              <option value={option.id}>{option.value}</option>
+            {paymentMethod.map((payment) => (
+              <option key={payment.id} value={payment.id}>
+                {payment.value}
+              </option>
             ))}
           </select>
-
           <div className="mb-10" />
         </div>
-        <div className="basis-1/4 space-0">
-          <Summary click="Purchase">
-            <div className="flow-root">
-              <p className="float-left">Price</p>
-              <p className="float-right">
-                Rp{" "}
-                {totaHarga.toLocaleString("id-ID", {
-                  styles: "currency",
-                  currency: "IDR",
-                })}
-              </p>
-            </div>
-            <div className="border-b">
-              <div className="flow-root">
-                <p className="float-left">Shipping Price</p>
-                <p className="float-right">
-                  Rp{" "}
-                  {hargaOngkir.toLocaleString("id-ID", {
-                    styles: "currency",
-                    currency: "IDR",
-                  })}
-                </p>
+        <div className="basis-1/4">
+          <div className="flex justify-center p-6 mx-6 ">
+            <div className="card w-96 bg-base-100 shadow-xl">
+              <div className="card-body">
+                <h2 className="card-title mb-3">Shopping Summary</h2>
+                <div className="flow-root mb-3">
+                  <div>
+                    <div className="flow-root">
+                      <p className="float-left">Price</p>
+                      <p className="float-right">
+                        Rp{" "}
+                        {subTotal.toLocaleString("id-ID", {
+                          styles: "currency",
+                          currency: "IDR",
+                        })}
+                      </p>
+                    </div>
+                    <div className="border-b ">
+                      <div className="flow-root">
+                        <p className="float-left">Shipping Price</p>
+                        <p className="float-right">
+                          {shippingFee !== undefined && shippingFee !== 0
+                            ? shippingFee.toLocaleString("id-ID", {
+                                style: "currency",
+                                currency: "IDR",
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 0,
+                              })
+                            : ""}
+                        </p>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="float-left">Shopping Price</p>
+                      <p className="float-right">
+                        Rp{" "}
+                        {totalBelanja.toLocaleString("id-ID", {
+                          styles: "currency",
+                          currency: "IDR",
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="card-actions justify-end">
+                  <button
+                    onClick={() => {
+                      handleOrder(cart, subTotal, shippingFee),
+                        handlePayment(
+                          orderId,
+                          cart,
+                          selectedPaymentMethod,
+                          totalBelanja
+                        );
+                    }}
+                    className="btn btn-primary text-white"
+                  >
+                    Check Out
+                  </button>
+                </div>
               </div>
             </div>
-            <div>
-              <p className="float-left">Shopping Price</p>
-              <p className="float-right">
-                Rp{" "}
-                {totalBelanja.toLocaleString("id-ID", {
-                  styles: "currency",
-                  currency: "IDR",
-                })}
-              </p>
-            </div>
-          </Summary>
+          </div>
         </div>
       </div>
     </div>
   );
-};
-export default Shipping_fee;
+}

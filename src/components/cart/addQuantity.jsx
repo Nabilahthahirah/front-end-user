@@ -7,7 +7,7 @@ export default function AddQuantity({ carts }) {
   const token = getCookie(`accessToken`);
   const handleAddQuantity = async (cartId, cartQty) => {
     const cartQuantity = parseInt(cartQty);
-    const cartAddQuantity = cartQuantity + 1;
+    const cartAddedQuantity = cartQuantity + 1;
     const requestOptions = {
       method: "PUT",
       headers: {
@@ -15,7 +15,7 @@ export default function AddQuantity({ carts }) {
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        quantity: cartAddQuantity,
+        quantity: cartAddedQuantity,
       }),
     };
 

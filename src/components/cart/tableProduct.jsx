@@ -10,7 +10,7 @@ const TableProduct = (props) => {
       <thead>
         <tr>
           <th className="py-2 px-4 border-b">Product</th>
-          <th className="py-2 px-4 border-b">Price / pcs</th>
+          <th className="py-2 px-4 border-b">Price/pcs</th>
           <th className="py-2 px-4 border-b">Quantity</th>
           <th className="py-2 px-4 border-b ">Action</th>
         </tr>

@@ -7,8 +7,10 @@ const Select = (props) => {
         <option disabled selected>
           {disableSelected}
         </option>
-        {data.map((option) => (
-          <option value={option.id}>{option.value}</option>
+        {data.map((option, index) => (
+          <option key={index} value={option.id}>
+            {option.value}
+          </option>
         ))}
       </select>
       {children}
