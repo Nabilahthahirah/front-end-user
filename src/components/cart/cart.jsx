@@ -5,12 +5,16 @@ import { getCookie } from "cookies-next";
 import { baseUrl } from '@/lib/constant';
 import { FaTrash } from "react-icons/fa6";
 import Link from "next/link"
+import Select from './select';
 
 const TableProduct = ({ cartP }) => {
   const token = getCookie(`accessToken`);
   const [cartProduct, setCartProduct] = useState([]);
   const [subTotal, setSubTotal] = useState(0);
   const [editMode, setEditMode] = useState(false);
+  const [cart, setCart] = useState(0);
+  const [shippingFee, setShippingFee] = useState(0);
+  const [selectedShippingOption, setSelectedShippingOption] = useState('');
 
   useEffect(() => {
     async function fetchCart() {
@@ -27,6 +31,7 @@ const TableProduct = ({ cartP }) => {
 
         setCartProduct(data.data.cart_product);
         calculateSubTotal(data.data.cart_product);
+        setCart(data.data.id)
 
       } catch (error) {
         console.error('Error fetching products:', error);
@@ -126,6 +131,83 @@ const TableProduct = ({ cartP }) => {
     setEditMode(!editMode);
   };
 
+  // Shipping
+  const handleShippingOptionChange = (selectedOption) => {
+    setSelectedShippingOption(selectedOption.toLowerCase());
+  };
+
+  const courier = selectedShippingOption
+
+  useEffect(() => {
+    async function fetchShipping() {
+      try {
+        const response = await fetch(`${baseUrl}/api/shipping/${cart}?courier=${courier}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          }
+        });
+
+        const data = await response.json();
+
+        setShippingFee(data.data);
+
+      } catch (error) {
+        console.error('Error fetching fee:', error);
+      }
+    }
+
+    fetchShipping();
+  }, [token, cart, courier]);
+
+  // console.log(`cart: ${cart}`)
+  // console.log(`selectedShippingOption: ${selectedShippingOption}`)
+  // console.log(`shippingFee: ${shippingFee}`)
+  const totalBelanja = shippingFee + subTotal;
+
+  const addOrder = async () => {
+
+    try {
+      const response = await fetch(`${baseUrl}/api/order/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          cart_id: cart,
+          shippingCost: shippingFee,
+          productPrice: subTotal
+        }),
+      });
+
+      // console.log(response.headers)
+      // console.log(response.headers.authorization)
+
+      const data = response.ok ? await response.json() : {};
+
+      if (response.ok) {
+        toast.success(data.message);
+
+        // {cartProduct.length > 0 && cartProduct.map(cartP => (
+        //   fetch(`${baseUrl}/api/cartproduct/${cartP.id}`, {
+        //     method: "DELETE",
+        //     headers: {
+        //       "Content-Type": "application/json",
+        //       Authorization: `Bearer ${token}`,
+        //     },
+        //   })
+        // ))}
+      } else {
+        toast.error(`${data.error}`);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("An error occurred. Please try again later.");
+    }
+  }
+
   return (
     <div className="flex flex- gap-0 mx-20">
       <div className="basis-3/4">
@@ -191,39 +273,74 @@ const TableProduct = ({ cartP }) => {
             ))}
           </tbody>
         </table>
+        <div className="divider w-full m-6" />
+        <div className="w-full mx-6 mt-4 mb-12">
+          <Select
+            title="Shipping Method"
+            disableSelected="Choose Shipping"
+            options={["Jne", "Tiki", "POS"]}
+            onChange={handleShippingOptionChange}
+          />
+        </div>
       </div>
       <div className="basis-1/4">
-        <div className="flex justify-center p-6 mx-6 ">
-          <div className="card w-96 bg-base-100 shadow-xl">
-            <div className="card-body">
-              <h2 className="card-title mb-3">Shopping Summary</h2>
-              <div className="flow-root mb-3">
-                <div>
-                  <div className="flow-root ">
-                    <p className="float-left">Price </p>
-                    <p className="float-right">
-                      Rp{" "}
-                      {subTotal.toLocaleString("id-ID", {
-                        style: "currency",
-                        currency: "IDR",
-                      })}
-                    </p>
+          <div className="flex justify-center p-6 mx-6 ">
+            <div className="card w-96 bg-base-100 shadow-xl">
+              <div className="card-body">
+                <h2 className="card-title mb-3">Shopping Summary</h2>
+                <div className="flow-root mb-3">
+                  <div>
+                    <div className="flow-root">
+                      <p className="float-left">Price</p>
+                      <p className="float-right">
+                        Rp{" "}
+                        {subTotal.toLocaleString("id-ID", {
+                          styles: "currency",
+                          currency: "IDR",
+                        })}
+                      </p>
+                    </div>
+                    <div className="border-b">
+                      <div className="flow-root">
+                        <p className="float-left">Shipping Price</p>
+                        <p className="float-right">
+                          {shippingFee !== undefined && shippingFee !== 0
+                            ? shippingFee.toLocaleString("id-ID", {
+                                style: "currency",
+                                currency: "IDR",
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 0,
+                              })
+                            : ""}
+                        </p>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="float-left">Shopping Price</p>
+                      <p className="float-right">
+                        Rp{" "}
+                        {totalBelanja.toLocaleString("id-ID", {
+                          styles: "currency",
+                          currency: "IDR",
+                        })}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="card-actions justify-end">
-                <Link href='/shipping-fee'>
+                <div className="card-actions justify-end">
+                <Link href="/payment">
                   <button
                     className="btn btn-primary text-white"
+                    onClick={addOrder}
                   >
-                    Check Out
+                    Lanjut Pembayaran
                   </button>
                 </Link>
               </div>
+              </div>
             </div>
           </div>
-        </div>
       </div>
     </div>
   );

@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import FormAddress from "@/components/cart/formAddress";
 import fotoProduct from "@/components/assets/logo.png";
 import Title from "@/components/cart/title.jsx";
 import Select from "@/components/cart/select";
+import SelectPaymentMethod from "@/components/cart/selectPaymentMethod";
 import Image from "next/image";
 import { getCookie } from "cookies-next";
 import { baseUrl } from '@/lib/constant';
+import { ToastContainer, toast } from "react-toastify";
 import Link from "next/link";
 
 export default function ShippingFee() {
@@ -17,7 +18,9 @@ export default function ShippingFee() {
   const [cart, setCart] = useState(0);
   const [shippingFee, setShippingFee] = useState(0);
   const [selectedShippingOption, setSelectedShippingOption] = useState('');
+  const [selectedPaymentMethodOption, setSelectedPaymentMethodOption] = useState('');
   const [subTotal, setSubTotal] = useState(0);
+  const [paymentMethods, setPaymentMethods] = useState([]);
 
   useEffect(() => {
     async function fetchCart() {
@@ -54,10 +57,43 @@ export default function ShippingFee() {
     setSubTotal(total);
   };
 
-  // Shipping
+  // payment method
+  useEffect(() => {
+    async function fetchPaymentMethod() {
+      try {
+        const response = await fetch(`${baseUrl}/api/paymentmethod/`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
+        const data = await response.json();
+
+        setPaymentMethods(data.data);
+
+      } catch (error) {
+        console.error('Error fetching payment method:', error);
+      }
+    }
+
+    fetchPaymentMethod();
+  }, [token]);
+
+  let href = ""
+  selectedPaymentMethodOption == 1 ? href = "/payment/qris" : href = "/payment/tf"
+
+  // console.log(`paymentmethod: ${paymentMethods}`)
+  // console.log(`selectedPaymentMethodOption: ${selectedPaymentMethodOption}`)
+
+  // Shipping
   const handleShippingOptionChange = (selectedOption) => {
     setSelectedShippingOption(selectedOption.toLowerCase());
+  };
+  
+  const handlePaymentMthodOptionChange = (selectedOption) => {
+    setSelectedPaymentMethodOption(selectedOption);
   };
 
   const courier = selectedShippingOption
@@ -85,10 +121,53 @@ export default function ShippingFee() {
     fetchShipping();
   }, [token, cart, courier]);
 
-  console.log(`cart: ${cart}`)
-  console.log(`selectedShippingOption: ${selectedShippingOption}`)
-  console.log(`shippingFee: ${shippingFee}`)
+  // console.log(`cart: ${cart}`)
+  // console.log(`selectedShippingOption: ${selectedShippingOption}`)
+  // console.log(`shippingFee: ${shippingFee}`)
   const totalBelanja = shippingFee + subTotal;
+
+  const addOrder = async () => {
+
+    try {
+      const response = await fetch(`${baseUrl}/api/order/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          cart_id: cart,
+          shippingCost: shippingFee,
+          productPrice: subTotal
+        }),
+      });
+
+      // console.log(response.headers)
+      // console.log(response.headers.authorization)
+
+      const data = response.ok ? await response.json() : {};
+
+      if (response.ok) {
+        toast.success(data.message);
+
+        {cartProduct.length > 0 && cartProduct.map(cartP => (
+          fetch(`${baseUrl}/api/cartproduct/${cartP.id}`, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          })
+        ))}
+      } else {
+        toast.error(`${data.error}`);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("An error occurred. Please try again later.");
+    }
+  }
+
   return (
     <div>
       <Title title="Check Out" />
@@ -97,7 +176,7 @@ export default function ShippingFee() {
           <div className="produk">
             <p className="font-semibold">Order Details</p>
             {cartProduct.length > 0 && cartProduct.map(cartP => (
-            <div className="flex flex-row justify-center  mt-3">
+            <div className="flex flex-row justify-center mt-3" jey={cartP.id}>
               <div className="w-1/3">
                 {" "}
                 <Image src={fotoProduct} alt="produk1" />
@@ -123,10 +202,11 @@ export default function ShippingFee() {
             onChange={handleShippingOptionChange}
           />
           <div className="divider" />
-          <Select
+          <SelectPaymentMethod
             title="Payment Method"
             disableSelected="Choose Payment"
-            options={["QRIS", "Transfer"]}
+            options={paymentMethods}
+            onChange={handlePaymentMthodOptionChange}
           />
           <div className="mb-10" />
         </div>
@@ -176,9 +256,10 @@ export default function ShippingFee() {
                 </div>
 
                 <div className="card-actions justify-end">
-                <Link href='/shipping-fee'>
+                <Link href={href}>
                   <button
                     className="btn btn-primary text-white"
+                    onClick={addOrder}
                   >
                     Check Out
                   </button>

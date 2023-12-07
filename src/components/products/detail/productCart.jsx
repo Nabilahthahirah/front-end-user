@@ -56,7 +56,7 @@ export default function ProductCart({productDetail}) {
         },
         body: JSON.stringify({
           product_id: idProduct,
-          quantity,
+          quantity: parseInt(quantity),
           price
         }),
       });
