@@ -57,7 +57,13 @@ export default function Page() {
 
   return (
     <div className=" py-32">
-      <div className="flex bg-white rounded-lg shadow-lg overflow-hidden mx-auto max-w-sm lg:max-w-4xl bg-cover bg-center" style={{ backgroundImage: "url('https://plus.unsplash.com/premium_photo-1698305283043-7691a494f891?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')" }}>
+      <div
+        className="flex bg-white rounded-lg shadow-lg overflow-hidden mx-auto max-w-sm lg:max-w-4xl bg-cover bg-center"
+        style={{
+          backgroundImage:
+            "url('https://plus.unsplash.com/premium_photo-1698305283043-7691a494f891?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
+        }}
+      >
         <div className="hidden lg:block lg:w-1/2 bg-cover "></div>
         <form onSubmit={handleSubmit} className="w-full p-8 lg:w-1/2 bg-white">
           <h2 className="text-2xl font-semibold text-gray-700 text-center">

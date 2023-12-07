@@ -1,5 +1,8 @@
+"use client";
+import { useRouter } from "next/navigation";
 const Summary = (props) => {
-  const { children, click } = props;
+  const { children, title, link } = props;
+  const router = useRouter();
   return (
     <div className="flex justify-center p-6 mx-6 ">
       <div className="card w-96 bg-base-100 shadow-xl">
@@ -9,10 +12,11 @@ const Summary = (props) => {
 
           <div className="card-actions justify-end">
             <button
+              onClick={() => router.push(`${link}`)}
               className="btn btn-primary text-white
             "
             >
-              {click}
+              {title}
             </button>
           </div>
         </div>
