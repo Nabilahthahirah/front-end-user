@@ -27,7 +27,7 @@ export default function ShippingFee() {
   const [paymentMethod, setPaymentMethod] = useState([]);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(0);
   const [tokenMidtrans, setTokenMidtrans] = useState("");
-  const [orderStatusId, setOrderStatusId] = useState(0);
+  const [paymentId, setPaymentId] = useState(0);
 
   useEffect(() => {
     async function fetchPaymentMethod() {
@@ -196,7 +196,6 @@ export default function ShippingFee() {
         }),
       });
       const data = await response.json();
-      setOrderStatusId(data.data.id);
       if (response.ok) {
         toast.success("Order successful!");
       } else {
@@ -229,7 +228,7 @@ export default function ShippingFee() {
       }),
     });
     const data = await response.json();
-    const paymentId = data.newPayments.id;
+    setPaymentId(data.newPayments.id);
     console.log("data payment", data);
     if (response.ok) {
       toast.success("Payment successful!");
@@ -254,52 +253,43 @@ export default function ShippingFee() {
     if (tokenMidtrans) {
       window.snap.pay(tokenMidtrans, {
         onSuccess: async (result) => {
-          const response = await fetch(
-            `${baseUrl}/api/order-status/${orderStatusId}`,
-            {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                status: "Payment Success",
-              }),
-            }
-          );
+          const response = await fetch(`${baseUrl}/api/payment/${paymentId}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              status: "accepted",
+            }),
+          });
           const data = await response.json();
-          toast.success("payment ", JSON.stringify(result));
+          toast.success("payment success", JSON.stringify(result));
           setTokenMidtrans("");
         },
         onPending: async (result) => {
-          const response = await fetch(
-            `${baseUrl}/api/order-status/${orderStatusId}`,
-            {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                status: "Payment Pending",
-              }),
-            }
-          );
+          const response = await fetch(`${baseUrl}/api/payment/${paymentId}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              status: "waiting",
+            }),
+          });
           const data = await response.json();
-          toast.info("payment ", JSON.stringify(result));
+          toast.info("payment pending", JSON.stringify(result));
           setTokenMidtrans("");
         },
         onError: async (result) => {
-          const response = await fetch(
-            `${baseUrl}/api/order-status/${orderStatusId}`,
-            {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                status: "Payment Error",
-              }),
-            }
-          );
+          const response = await fetch(`${baseUrl}/api/payment/${paymentId}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              status: "rejected",
+            }),
+          });
           const data = await response.json();
           toast.error("payment ", JSON.stringify(error));
           setTokenMidtrans("");
@@ -310,7 +300,7 @@ export default function ShippingFee() {
         },
       });
     }
-  }, [tokenMidtrans, orderStatusId]);
+  }, [tokenMidtrans, paymentId]);
 
   return (
     <div>
