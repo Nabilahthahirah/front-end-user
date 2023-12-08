@@ -1,9 +1,8 @@
-const Select = (props) => {
-
-  const { title, disableSelected, options, onChange } = props;
+const SelectPaymentMethod = ({ title, disableSelected, options, onChange }) => {
 
   const handleSelectChange = (event) => {
-    onChange(event.target.value);
+    const selectedId = event.target.options[event.target.selectedIndex].id;
+    onChange(selectedId);
   };
 
   return (
@@ -16,11 +15,13 @@ const Select = (props) => {
         <option disabled selected>
           {disableSelected}
         </option>
-        {options.map((option, index) => (
-          <option key={index}>{option}</option>
+        {options.map((option) => (
+          <option key={option.id} value={option.id} id={option.id}>
+            {option.value}
+          </option>
         ))}
       </select>
     </div>
   );
 };
-export default Select;
+export default SelectPaymentMethod;

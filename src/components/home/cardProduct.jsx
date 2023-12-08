@@ -9,14 +9,17 @@ const cardProduct = ({product}) => {
   return (
     <div className='carouselItem border-2 border-color-dark border-opacity-25 md:border-opacity-0 p-2'>
       <img
-        src={product.photo || imageError}
+        src={product.product_detail[0].photo || imageError}
         alt="product"
         className='product--image'
+        onError={(e) => {
+          e.target.src = imageError
+        }}
       />
       <h4 className='text-xl font-medium mt-2'>{shortenText(product.name, 18)}</h4>
       <p className='mb-1'>{shortenText(product.description, 26)}</p>
 
-      <Link href={`/products/${product.id}`}>
+      <Link href={`/products/detail/${product.id}`}>
         <button className="bg-primary text-base-content p-2 rounded-lg">
           <div className="block text-white hover:underline cursor-pointer">
             <p className="text-md">Details</p>

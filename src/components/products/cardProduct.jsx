@@ -16,15 +16,18 @@ const cardProduct = ({product}) => {
     <div className="card w-45 bg-base-60 shadow-xl ">
       <figure className="p-2">
         <img 
-          src={product.photo || imageError}
+          src={product.product_detail[0].photo || imageError}
           alt="product"
           className="rounded-xl"
+          onError={(e) => {
+            e.target.src = imageError
+          }}
         />
       </figure>
       <div className="card-body items-center text-center">
         <h2 className="card-title">{shortenText(product.name, 18)}</h2>
         <p>{shortenText(product.description, 26)}</p>
-        <Link href={`/products/${product.id}`}>
+        <Link href={`/products/detail/${product.id}`}>
           <button className="bg-primary text-base-content p-2 rounded-lg">
             <div className="block text-white hover:underline cursor-pointer">
               <p className="text-md">Details</p>
