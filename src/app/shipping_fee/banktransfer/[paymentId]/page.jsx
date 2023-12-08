@@ -18,10 +18,7 @@ export default function BankTransfer({ params }) {
             </li>
             <li>
               {" "}
-              <a
-                //   href="/upload/${id}"
-                className="link link-primary"
-              >
+              <a href="/upload/${id}" className="link link-primary">
                 Upload bukti pembayaran
               </a>
             </li>

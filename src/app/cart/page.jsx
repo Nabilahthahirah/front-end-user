@@ -8,8 +8,8 @@ export default async function Cart() {
   });
   console.log("carts", carts.data);
   return (
-    <div className="flex flex-col justify-center">
-      <div className="my-7">
+    <div className="flex flex-col justify-center min-h-screen">
+      <div className="mb-7">
         <Title title="Shopping Cart" />
       </div>
       <div className="flex gap-0 mx-20 mb-5">
