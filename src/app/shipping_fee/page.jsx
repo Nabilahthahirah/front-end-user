@@ -7,7 +7,7 @@ import fetchData from "@/fetch";
 import Image from "next/image";
 import { getCookie } from "cookies-next";
 import { baseUrl } from "@/lib/constant";
-import Link from "next/link";
+import Router from "next/router";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 export default function ShippingFee() {
@@ -27,7 +27,7 @@ export default function ShippingFee() {
   const [paymentMethod, setPaymentMethod] = useState([]);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(0);
   const [tokenMidtrans, setTokenMidtrans] = useState("");
-  const [orderId, setOrderId] = useState(0);
+  const [orderStatusId, setOrderStatusId] = useState(0);
 
   useEffect(() => {
     async function fetchPaymentMethod() {
@@ -196,6 +196,7 @@ export default function ShippingFee() {
         }),
       });
       const data = await response.json();
+      setOrderStatusId(data.data.id);
       if (response.ok) {
         toast.success("Order successful!");
       } else {
@@ -228,15 +229,23 @@ export default function ShippingFee() {
       }),
     });
     const data = await response.json();
+    const paymentId = data.newPayments.id;
     console.log("data payment", data);
-    setTokenMidtrans(data.token);
-    console.log("token midtrans", tokenMidtrans);
     if (response.ok) {
       toast.success("Payment successful!");
     } else {
       toast.error(`${data.message}`);
       return;
     }
+    const payment = parseInt(selectedPaymentMethod);
+    if (payment == 2) {
+      return router.push(
+        `/shipping_fee/banktransfer/${encodeURIComponent(paymentId)}`
+      );
+    }
+    setTokenMidtrans(data.token);
+    console.log("token midtrans", tokenMidtrans);
+
     router.refresh();
     // router.push("/shipping_fee");
   };
@@ -246,7 +255,7 @@ export default function ShippingFee() {
       window.snap.pay(tokenMidtrans, {
         onSuccess: async (result) => {
           const response = await fetch(
-            `${baseUrl}/api/order-status/${orderId}`,
+            `${baseUrl}/api/order-status/${orderStatusId}`,
             {
               method: "PUT",
               headers: {
@@ -263,7 +272,7 @@ export default function ShippingFee() {
         },
         onPending: async (result) => {
           const response = await fetch(
-            `${baseUrl}/api/order-status/${orderId}`,
+            `${baseUrl}/api/order-status/${orderStatusId}`,
             {
               method: "PUT",
               headers: {
@@ -280,7 +289,7 @@ export default function ShippingFee() {
         },
         onError: async (result) => {
           const response = await fetch(
-            `${baseUrl}/api/order-status/${orderId}`,
+            `${baseUrl}/api/order-status/${orderStatusId}`,
             {
               method: "PUT",
               headers: {
@@ -301,7 +310,7 @@ export default function ShippingFee() {
         },
       });
     }
-  }, [tokenMidtrans]);
+  }, [tokenMidtrans, orderStatusId]);
 
   return (
     <div>
@@ -417,13 +426,13 @@ export default function ShippingFee() {
                 <div className="card-actions justify-end">
                   <button
                     onClick={async () => {
-                      const orderIdBeneran = await handleOrder(
+                      const orderId = await handleOrder(
                         cart,
                         subTotal,
                         shippingFee
                       );
                       handlePayment(
-                        orderIdBeneran,
+                        orderId,
                         cart,
                         selectedPaymentMethod,
                         totalBelanja
@@ -433,21 +442,6 @@ export default function ShippingFee() {
                   >
                     Check Out
                   </button>
-
-                  {/* <button
-                    onClick={() => {
-                      handleOrder(cart, subTotal, shippingFee),
-                        handlePayment(
-                          orderId,
-                          cart,
-                          selectedPaymentMethod,
-                          totalBelanja
-                        );
-                    }}
-                    className="btn btn-primary text-white"
-                  >
-                    Check Out
-                  </button> */}
                 </div>
               </div>
             </div>
