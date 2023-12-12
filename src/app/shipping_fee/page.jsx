@@ -7,7 +7,6 @@ import fetchData from "@/fetch";
 import Image from "next/image";
 import { getCookie } from "cookies-next";
 import { baseUrl } from "@/lib/constant";
-import Router from "next/router";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 export default function ShippingFee() {
@@ -28,6 +27,11 @@ export default function ShippingFee() {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(0);
   const [tokenMidtrans, setTokenMidtrans] = useState("");
   const [paymentId, setPaymentId] = useState(0);
+  const [orderStatusId, setOrderStatusId] = useState(0);
+  // const [dataUser, setDataUser] = useState([]);
+
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
 
   useEffect(() => {
     async function fetchPaymentMethod() {
@@ -38,7 +42,7 @@ export default function ShippingFee() {
 
         setPaymentMethod(data);
       } catch (error) {
-        console.error("Error fetching province:", error);
+        console.error("Error fetching payment:", error);
       }
     }
 
@@ -68,6 +72,30 @@ export default function ShippingFee() {
 
     fetchCart();
   }, [token]);
+
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const response = await fetch(`${baseUrl}/api/user/detail/`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = await response.json();
+        setUsername(data.data[0].username);
+        setEmail(data.data[0].email);
+        // setEmail(Base64.encodeURI(data.data[0].email));
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    }
+    fetchUser();
+  }, [token]);
+  // console.log("dataUser :  ", username, email);
+  // console.log(username);
+  // console.log(email);
 
   useEffect(() => {
     async function fetchAddress() {
@@ -196,6 +224,7 @@ export default function ShippingFee() {
         }),
       });
       const data = await response.json();
+      setOrderStatusId(data.data.id);
       if (response.ok) {
         toast.success("Order successful!");
       } else {
@@ -230,6 +259,7 @@ export default function ShippingFee() {
     const data = await response.json();
     setPaymentId(data.newPayments.id);
     console.log("data payment", data);
+    console.log("paymentId", paymentId);
     if (response.ok) {
       toast.success("Payment successful!");
     } else {
@@ -238,59 +268,144 @@ export default function ShippingFee() {
     }
     const payment = parseInt(selectedPaymentMethod);
     if (payment == 2) {
-      return router.push(
-        `/shipping_fee/banktransfer/${encodeURIComponent(paymentId)}`
-      );
+      return router.push(`/shipping_fee/banktransfer/${data.newPayments.id}`);
     }
     setTokenMidtrans(data.token);
     console.log("token midtrans", tokenMidtrans);
 
     router.refresh();
-    // router.push("/shipping_fee");
   };
+
+  // const handlePayment = async (
+  //   orderId,
+  //   cart,
+  //   selectedPaymentMethod,
+  //   totalBelanja
+  // ) => {
+  //   const response = await fetch(`${baseUrl}/api/payment/`, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       order_id: parseInt(orderId),
+  //       cart_id: parseInt(cart),
+  //       payment_method_id: parseInt(selectedPaymentMethod),
+  //       total_price: parseInt(totalBelanja),
+  //     }),
+  //   });
+  //   const data = await response.json();
+  //   // console.log("paymentId 1", paymentId);
+  //   setPaymentId(data.newPayments.id);
+  //   // console.log("paymentId 2", paymentId);
+  //   console.log("data payment", data);
+  //   if (response.ok) {
+  //     toast.success("Payment successful!");
+  //   } else {
+  //     toast.error(`${data.message}`);
+  //     return;
+  //   }
+  //   console.log("paymentId 3", paymentId);
+  //   const payment = parseInt(selectedPaymentMethod);
+  //   if (payment == 2) {
+  //     return router.push(`/shipping_fee/banktransfer/${paymentId}`);
+  //   }
+  //   setTokenMidtrans(data.token);
+  //   console.log("token midtrans", tokenMidtrans);
+
+  //   router.refresh();
+  //   // router.push("/shipping_fee");
+  // };
+  // console.log("paymentid 4", paymentId);
 
   useEffect(() => {
     if (tokenMidtrans) {
       window.snap.pay(tokenMidtrans, {
         onSuccess: async (result) => {
-          const response = await fetch(`${baseUrl}/api/payment/${paymentId}`, {
+          // status payment
+          const responsePayment = await fetch(
+            `${baseUrl}/api/payment/${paymentId}`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                status: "accepted",
+              }),
+            }
+          );
+          const dataPayment = await responsePayment.json();
+          toast.success("update payment status successful");
+          // status order
+          const responseOrderStatus = await fetch(
+            `${baseUrl}/api/order-status/${orderStatusId}`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                status: "Process",
+              }),
+            }
+          );
+          const dataOrderStatus = await responseOrderStatus.json();
+          toast.success("update order status successful");
+          // reset cart
+          const responseResetCart = await fetch(`${baseUrl}/api/cart/reset`, {
             method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          const dataResetCart = await responseResetCart.json();
+          toast.success("reset cart successful");
+          // send email
+          const responseSendEmail = await fetch(`${baseUrl}/api/sendEmail/`, {
+            method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              status: "accepted",
+              to_name: username,
+              from_name: "First Step Shop",
+              subject: "Konfirmasi Pengiriman First Step Shop",
+              message: "",
+              to_email: email,
             }),
           });
-          const data = await response.json();
-          toast.success("payment success", JSON.stringify(result));
+          const dataSendEmail = await responseSendEmail.json();
+          toast.success("send email successful");
           setTokenMidtrans("");
         },
         onPending: async (result) => {
-          const response = await fetch(`${baseUrl}/api/payment/${paymentId}`, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              status: "waiting",
-            }),
-          });
-          const data = await response.json();
+          // const response = await fetch(`${baseUrl}/api/payment/${paymentId}`, {
+          //   method: "PUT",
+          //   headers: {
+          //     "Content-Type": "application/json",
+          //   },
+          //   body: JSON.stringify({
+          //     status: "waiting",
+          //   }),
+          // });
+          // const data = await response.json();
           toast.info("payment pending", JSON.stringify(result));
           setTokenMidtrans("");
         },
         onError: async (result) => {
-          const response = await fetch(`${baseUrl}/api/payment/${paymentId}`, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              status: "rejected",
-            }),
-          });
-          const data = await response.json();
+          // const response = await fetch(`${baseUrl}/api/payment/${paymentId}`, {
+          //   method: "PUT",
+          //   headers: {
+          //     "Content-Type": "application/json",
+          //   },
+          //   body: JSON.stringify({
+          //     status: "rejected",
+          //   }),
+          // });
+          // const data = await response.json();
           toast.error("payment ", JSON.stringify(error));
           setTokenMidtrans("");
         },
@@ -300,7 +415,7 @@ export default function ShippingFee() {
         },
       });
     }
-  }, [tokenMidtrans, paymentId]);
+  }, [tokenMidtrans, paymentId, orderStatusId, username, email]);
 
   return (
     <div>
