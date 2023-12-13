@@ -1,8 +1,10 @@
+// src/app/profile/EditProfile.jsx
 "use client";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/zustand";
 import { baseUrl } from "@/lib/constant";
 import Link from "next/link";
+import EditProfile from "./components/EditProfile";
 
 export default function ProfilePage() {
   const { token, isLoggedIn } = useAuthStore();
@@ -18,12 +20,15 @@ export default function ProfilePage() {
 
       if (response.ok) {
         const data = await response.json();
-        setUser(data.data); // Menyimpan informasi pengguna ke state
+        setUser(data.data);
+        return data; // Mengembalikan data profil pengguna
       } else {
         console.error(`Error fetching user profile: ${response.statusText}`);
+        return null;
       }
     } catch (error) {
       console.error("Error fetching user profile:", error);
+      return null;
     }
   };
 
@@ -32,7 +37,6 @@ export default function ProfilePage() {
       fetchUserProfile();
     }
   }, [token, isLoggedIn]);
-
   return (
     <>
       {/* navbar */}
@@ -97,6 +101,7 @@ export default function ProfilePage() {
                 </p>
               </div>
               {/* Tambahkan field lain jika diperlukan */}
+              <EditProfile fetchUserProfile={fetchUserProfile} />
             </div>
           )}
         </div>
