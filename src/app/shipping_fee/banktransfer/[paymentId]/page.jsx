@@ -9,6 +9,7 @@ export default function BankTransfer({ params }) {
   const [totalPayment, setTotalPayment] = useState(0);
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
+  const [uploadPhoto, setUploadPhoto] = useState("");
   useEffect(() => {
     async function fetchPayment() {
       try {
@@ -16,10 +17,8 @@ export default function BankTransfer({ params }) {
           cache: "no-store",
         });
         console.log("respones", response);
-        // const data = await response.data.json();
-        // console.log("data", data);
-        // return;
         setTotalPayment(response.data.total_price);
+        setUploadPhoto(response.data.upload);
       } catch (error) {
         console.error("Error fetching payment:", error);
       }
@@ -43,25 +42,31 @@ export default function BankTransfer({ params }) {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    toast.info("Wait a minute, uploading foto");
-    toast.warn("dont press any button");
-    try {
-      const formData = new FormData();
-      formData.append("upload", imageFile);
-      const responseData = await fetch(`${baseUrl}/api/payment/upload/${id}`, {
-        method: "PUT",
-        body: formData,
-      });
-      console.log("status : ", responseData.status);
-      if (responseData.status == 200) {
-        toast.success("Upload successful!");
-        setImagePreview("");
-        router.refresh();
-      } else {
-        toast.error(`${responseData.message}`);
+    if (imageFile == null) {
+      toast.warn("select a photo first");
+    } else {
+      toast.info("Wait a minute, uploading foto");
+      toast.warn("dont press any button");
+      try {
+        const formData = new FormData();
+        formData.append("upload", imageFile);
+        const responseData = await fetch(
+          `${baseUrl}/api/payment/upload/${id}`,
+          {
+            method: "PUT",
+            body: formData,
+          }
+        );
+        if (responseData.status == 200) {
+          toast.success("Upload successful!");
+          setImagePreview("");
+          router.refresh();
+        } else {
+          toast.error(`${responseData.message}`);
+        }
+      } catch (error) {
+        console.error(`Error: ${error.message || "Unknown error"}`);
       }
-    } catch (error) {
-      console.error(`Error: ${error.message || "Unknown error"}`);
     }
   };
   return (
@@ -91,6 +96,77 @@ export default function BankTransfer({ params }) {
               pembayaran Anda melalui upload bukti Pembayaran. Jika terjadi
               kesalahan dalam upload foto, maka anda bisa upload foto kembali
               sebelum menutup halaman ini.
+              {/* {uploadPhoto != "" ? (
+                <div>
+                  <div className=" avatar h-80 flex justify-center mt-6">
+                    <Image
+                      className=" avatar h-80 flex justify-center mt-6"
+                      src={uploadPhoto}
+                      // fill
+                      fill
+                      objectFit="contain"
+                      // className="w-32 h-32 object-cover mb-2 rounded-md"
+                    />
+                  </div>
+                  <div className="m-10 max-w-md mx-auto p-6 bg-white border rounded-md shadow-md">
+                    <form onSubmit={handleSubmit}>
+                      <label
+                        htmlFor="file-upload"
+                        className="flex flex-col items-center justify-center w-full h-32 p-4 border-dashed border-2 border-gray-300 rounded-md cursor-pointer"
+                      >
+                        <input
+                          id="file-upload"
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={handleImageChange}
+                        />
+                        {imagePreview ? (
+                          <Image
+                            src={imagePreview}
+                            alt="Selected"
+                            width={500}
+                            height={500}
+                            className="w-32 h-32 object-cover mb-2 rounded-md"
+                          />
+                        ) : (
+                          <div className="flex flex-col items-center">
+                            <svg
+                              className="w-10 h-10 text-gray-400 mb-2"
+                              fill="none"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path d="M12 4v16m8-8H4"></path>
+                            </svg>
+                            <p className="text-sm text-gray-500">
+                              Drag and drop or click to select a file
+                            </p>
+                          </div>
+                        )}
+                      </label>
+                      {imagePreview && (
+                        <div className="mt-4">
+                          <p className="text-lg font-semibold text-gray-700">
+                            {imagePreview.name}
+                          </p>
+                        </div>
+                      )}
+                      <div className="text-center">
+                        <button
+                          type="submit"
+                          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:shadow-outline-blue active:bg-blue-800"
+                        >
+                          Upload
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              ) : ( */}
               <div className="m-10 max-w-md mx-auto p-6 bg-white border rounded-md shadow-md">
                 <form onSubmit={handleSubmit}>
                   <label
@@ -148,6 +224,7 @@ export default function BankTransfer({ params }) {
                   </div>
                 </form>
               </div>
+              {/* )} */}
             </li>
             <li>
               Tunggu konfirmasi admin First Step Shop. Informasi selanjutnya
