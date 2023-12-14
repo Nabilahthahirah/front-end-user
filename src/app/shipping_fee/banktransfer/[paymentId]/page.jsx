@@ -43,22 +43,18 @@ export default function BankTransfer({ params }) {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
+    toast.info("Wait a minute, uploading foto");
+    toast.warn("dont press any button");
     try {
+      const formData = new FormData();
+      formData.append("upload", imageFile);
       const responseData = await fetch(`${baseUrl}/api/payment/upload/${id}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          upload: imageFile,
-        }),
-        // formData,
+        body: formData,
       });
-      if (responseData.ok) {
-        const response = await responseData.json();
+      console.log("status : ", responseData.status);
+      if (responseData.status == 200) {
         toast.success("Upload successful!");
-
-        // Reset the form fields after successful submission
         setImagePreview("");
         router.refresh();
       } else {
@@ -89,12 +85,12 @@ export default function BankTransfer({ params }) {
               <p> Nomor Rekening : 111232312434123</p>
               <p> Atas Nama : First Step Shop</p>
             </li>
-            <li>
-              Pembayaran harus dilakukan sebelum menutup page website ini.
-            </li>
+            <li>Pembayaran harus dilakukan sebelum menutup halaman ini.</li>
             <li>
               Simpan bukti transfer sebagai bukti pembayaran dan konfirmasikan
-              pembayaran Anda melalui upload bukti Pembayaran
+              pembayaran Anda melalui upload bukti Pembayaran. Jika terjadi
+              kesalahan dalam upload foto, maka anda bisa upload foto kembali
+              sebelum menutup halaman ini.
               <div className="m-10 max-w-md mx-auto p-6 bg-white border rounded-md shadow-md">
                 <form onSubmit={handleSubmit}>
                   <label
@@ -152,6 +148,10 @@ export default function BankTransfer({ params }) {
                   </div>
                 </form>
               </div>
+            </li>
+            <li>
+              Tunggu konfirmasi admin First Step Shop. Informasi selanjutnya
+              akan disampaikan melalui email Anda.
             </li>
           </ul>
           <br />
