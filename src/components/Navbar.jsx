@@ -5,7 +5,6 @@ import logo from "./assets/logo.png";
 import ClientNavbar from "./ClientNavbar";
 import { cookies } from "next/headers";
 import fetchWithToken from "@/lib/fetchWithToken";
-
 export default async function Navbar() {
   let userData = null;
   //Check Token
@@ -28,12 +27,21 @@ export default async function Navbar() {
       isLoggedIn = true;
     }
   }
-  
+
   return (
     <div className="flex flex-row bg-white w-full top-0 left-0 border-b border-gray-200">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-        <Link href="/" className="btn btn-ghost normal-case text-xl hidden md:flex">
-          <Image alt="Coolest Brand ver!" src={logo} width="170" height="auto" priority />
+        <Link
+          href="/"
+          className="btn btn-ghost normal-case text-xl hidden md:flex"
+        >
+          <Image
+            alt="Coolest Brand ver!"
+            src={logo}
+            width="170"
+            height="auto"
+            priority
+          />
         </Link>
 
         {/* search Bar */}
