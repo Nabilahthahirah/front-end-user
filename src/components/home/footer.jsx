@@ -1,5 +1,5 @@
 import Image from "next/image";
-import logo from "../assets/logo2.png";
+import logo from "/public/assets/logo2.png";
 import fetchData from "@/lib/fetch";
 import Link from "next/link";
 

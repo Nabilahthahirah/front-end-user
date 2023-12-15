@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import logo from "./assets/profile.jpg";
+import logo from "/public/assets/profile.jpg";
 export default function ClientNavbar() {
   const router = useRouter();
   const { refresh, setRefresh, token, setToken, isLoggedIn, login, logout } =

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import SearchComponent from "./Search";
-import logo from "./assets/logo.png";
+import logo from "/public/assets/logo.png";
 import ClientNavbar from "./ClientNavbar";
 import { cookies } from "next/headers";
 import fetchWithToken from "@/lib/fetchWithToken";

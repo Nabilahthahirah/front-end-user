@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import fotoProduct from "@/components/assets/logo.png";
+import fotoProduct from "/public/assets/logo.png";
 import Title from "@/components/cart/title.jsx";
 import Select from "@/components/cart/select";
 import SelectPaymentMethod from "@/components/cart/selectPaymentMethod";

@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import logo from "../../../components/assets/logo.png";
+import logo from "/public/assets/logo.png";
 import { baseUrl } from "@/lib/constant";
 import { ToastContainer, toast } from "react-toastify";
 import { useRouter } from "next/navigation";

@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import carousel1 from "../assets/1.webp";
-import carousel2 from "../assets/2.png";
-import carousel3 from "../assets/3.png";
-import carousel4 from "../assets/1.webp";
+import carousel1 from "/public/assets/1.webp";
+import carousel2 from "/public//assets/2.png";
+import carousel3 from "/public/assets/3.png";
+import carousel4 from "/public/assets/1.webp";
 
 export default function Carousel() {
   const [activeSlide, setActiveSlide] = useState(1);
