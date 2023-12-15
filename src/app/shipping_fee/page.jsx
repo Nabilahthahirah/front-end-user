@@ -415,7 +415,7 @@ export default function ShippingFee() {
         },
       });
     }
-  }, [tokenMidtrans, paymentId, orderStatusId, username, email]);
+  }, [token, tokenMidtrans, paymentId, orderStatusId, username, email]);
 
   return (
     <div>
@@ -436,7 +436,7 @@ export default function ShippingFee() {
 
             {cartProduct.length > 0 &&
               cartProduct.map((cartP) => (
-                <div className="flex flex-row items-center ">
+                <div className="flex flex-row items-center " key={cartP.id}>
                   <div className="avatar w-20 h-20">
                     <Image
                       fill

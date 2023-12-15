@@ -1,16 +1,24 @@
-"use client"
+'use client'
 import Image from "next/image";
 import logo from "./assets/logo2.png";
 import fetchData from "@/lib/fetch";
 import Link from "next/link";
+import { useEffect } from "react";
 
-export default async function Footer() {
-  const { data } = await fetchData("api/category", "GET", {
-    cache: "no-store",
-  });
-  const category = data;
-  // console.log(category);
+export default function Footer() {
+  const loadFooter = async () => {
+    const { data } = await fetchData("api/category", "GET", {
+      cache: "no-store",
+    });
+    const category = data;
+    console.log(category);
+    return
+  }
 
+  useEffect(() => {
+    loadFooter();
+  }, [])
+  
   return (
     <div className="sticky bottom-0">
       <div className="flex-grow"></div>
@@ -25,20 +33,7 @@ export default async function Footer() {
             Established on 23 November 2023 in Jakarta.
           </p>
         </aside>
-        <nav>
-          <header className="footer-title text-white opacity-100">SHOP BY COLLECTION</header>
-          <ul className="list-none flex flex-col">
-            {category.map((categoryItem, index) => {
-              return (
-                <li key={categoryItem.id}>
-                  <Link href={`/category/${categoryItem.id}`} className="pb-2 text-white font-light">
-                    {categoryItem.category_name}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
+        <h1>OKEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE</h1>
         <nav>
           <header className="text-white opacity-100">PELAYANAN</header>
           <p className=" text-white font-light">Jam dan Hari Kerja</p>

@@ -1,4 +1,5 @@
-import Link from "next/link"
+import Link from "next/link";
+import Image from "next/image";
 
 const shortenText = (text, n) => {
   if (text.length > n) {
@@ -15,7 +16,7 @@ const cardProduct = ({product}) => {
   return (
     <div className="card w-45 bg-base-60 shadow-xl ">
       <figure className="p-2">
-        <img 
+        <Image 
           src={product.product_detail[0].photo || imageError}
           alt="product"
           className="rounded-xl"

@@ -358,7 +358,7 @@ export default function Page() {
           <div className="produk">
             <p className="font-semibold">Order Details</p>
             {cartProduct.length > 0 && cartProduct.map(cartP => (
-            <div className="flex flex-row justify-center mt-3" jey={cartP.id}>
+            <div className="flex flex-row justify-center mt-3" key={cartP.id}>
               <div className="w-1/3">
                 {" "}
                 <Image src={fotoProduct} alt="produk1" />

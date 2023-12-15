@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { shortenText } from './style/responsive'
 import './style/cardProduct.css'
+import Image from "next/image";
 
 const cardProduct = ({product}) => {
 
@@ -8,7 +9,7 @@ const cardProduct = ({product}) => {
 
   return (
     <div className='carouselItem border-2 border-color-dark border-opacity-25 md:border-opacity-0 p-2'>
-      <img
+      <Image
         src={product.product_detail[0].photo || imageError}
         alt="product"
         className='product--image'

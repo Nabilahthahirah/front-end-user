@@ -35,7 +35,7 @@ const Page = ({params}) => {
     }
 
     fetchProducts();
-  }, [currentPage]);
+  }, [id, currentPage]);
 
   // Category
   const [categories, setCategories] = useState([]);
@@ -74,7 +74,7 @@ const Page = ({params}) => {
     }
 
     fetchCategoryName();
-  }, []);
+  }, [id]);
 
   return (
     <div className='m-4'>
