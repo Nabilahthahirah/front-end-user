@@ -361,7 +361,7 @@ export default function Page() {
             <div className="flex flex-row justify-center mt-3" key={cartP.id}>
               <div className="w-1/3">
                 {" "}
-                <Image src={fotoProduct} alt="produk1" />
+                <Image width={500} height={500} src={fotoProduct} alt="produk1" />
               </div>
               <div className="w-2/3">
                 <p className="font-semibold">{cartP.product.name}</p>

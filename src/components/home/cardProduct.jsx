@@ -10,6 +10,8 @@ const cardProduct = ({product}) => {
   return (
     <div className='carouselItem border-2 border-color-dark border-opacity-25 md:border-opacity-0 p-2'>
       <Image
+      width={500}
+      height={500}
         src={product.product_detail[0].photo || imageError}
         alt="product"
         className='product--image'
