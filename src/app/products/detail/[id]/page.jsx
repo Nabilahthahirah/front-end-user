@@ -5,7 +5,7 @@ import Image from "next/image";
 import { getCookie } from "cookies-next";
 
 export default async function ProductDetail({params}) {
-  const res = await fetchWithTokenClient(`api/products/${params.id}`,  "GET", {cache: "no-store"});
+  const res = await fetchWithTokenClient(`api/products/detail/${params.id}`,  "GET", {cache: "no-store"});
   // const token = getCookie(`accessToken`);
   // console.log(res)
   return (
