@@ -1,5 +1,8 @@
-const Summary = () => {
-  const subTotal = 145000
+"use client";
+import { useRouter } from "next/navigation";
+const Summary = (props) => {
+  const { children, title, link } = props;
+  const router = useRouter();
   return (
     <div className="flex justify-center p-6 mx-6 ">
       <div className="card w-96 bg-base-100 shadow-xl">
@@ -22,10 +25,11 @@ const Summary = () => {
 
           <div className="card-actions justify-end">
             <button
+              onClick={() => router.push(`${link}`)}
               className="btn btn-primary text-white
             "
             >
-              Check Out
+              {title}
             </button>
           </div>
         </div>
